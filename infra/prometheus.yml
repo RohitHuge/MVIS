@@ -10,5 +10,5 @@ scrape_configs:
 
   - job_name: daq_frame_fetcher
     static_configs:
-      - targets: ["frame_fetcher:9101"]
+      - targets: ["frame_fetcher:9100"]
     metrics_path: /metrics
