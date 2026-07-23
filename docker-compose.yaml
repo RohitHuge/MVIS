@@ -80,6 +80,7 @@ services:
       PROMETHEUS_URL: http://prometheus:9090
       INGESTION_SERVICE: ingestion
       CHUNK_DIR: /data/chunks
+      SERVICE_URL_FRAME_FETCHER: http://frame_fetcher:8000
     volumes:
       - chunk_data:/data/chunks
       - /var/run/docker.sock:/var/run/docker.sock
@@ -94,6 +95,8 @@ services:
       context: .
       dockerfile: frame_fetcher/Dockerfile
     env_file: .env
+    expose:
+      - "9100"
     volumes:
       - chunk_data:/data/chunks
     depends_on:

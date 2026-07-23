@@ -32,13 +32,14 @@ from fastapi.responses import JSONResponse, Response
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from frame_fetcher import chunk_reader, metadata_client
-from ingestion.metrics import retrieval_latency
+from ingestion.metrics import retrieval_latency, start_metrics_server
 
 logger = logging.getLogger("frame_fetcher.server")
 
 # ── configuration (from environment) ─────────────────────────────────────────
 CHUNK_DIR    = os.environ.get("CHUNK_DIR",    "/data/chunks")
 POSTGRES_DSN = os.environ.get("POSTGRES_DSN", "postgresql://daq:daq@postgres:5432/daq")
+METRICS_PORT = int(os.environ.get("METRICS_PORT", "9100"))
 
 _start_time = time.time()
 
@@ -47,6 +48,7 @@ _start_time = time.time()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    start_metrics_server(METRICS_PORT)
     try:
         await metadata_client.connect(POSTGRES_DSN)
         logger.info("frame_fetcher: postgres connected")
