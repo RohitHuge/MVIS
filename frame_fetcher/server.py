@@ -48,7 +48,10 @@ _start_time = time.time()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    start_metrics_server(METRICS_PORT)
+    try:
+        start_metrics_server(METRICS_PORT)
+    except OSError as e:
+        logger.info("metrics server already bound by another worker, skipping (%s)", e)
     try:
         await metadata_client.connect(POSTGRES_DSN)
         logger.info("frame_fetcher: postgres connected")
