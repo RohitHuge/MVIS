@@ -15,8 +15,6 @@ services:
       POSTGRES_DB:       ${POSTGRES_DB:-daq}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-daq}"]
       interval: 5s
@@ -27,9 +25,6 @@ services:
   nats:
     <<: *common
     image: nats:2.10-alpine
-    ports:
-      - "4222:4222"   # client
-      - "8222:8222"   # HTTP monitoring
 
   prometheus:
     <<: *common
@@ -69,8 +64,6 @@ services:
     env_file: .env
     volumes:
       - chunk_data:/data/chunks
-    ports:
-      - "9100:9100"   # Prometheus metrics scrape
     depends_on:
       postgres:
         condition: service_healthy
@@ -103,9 +96,6 @@ services:
     env_file: .env
     volumes:
       - chunk_data:/data/chunks
-    ports:
-      - "8000:8000"   # REST API
-      - "9101:9100"   # Prometheus metrics
     depends_on:
       postgres:
         condition: service_healthy
