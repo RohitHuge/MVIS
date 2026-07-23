@@ -66,12 +66,12 @@ def _write_bw_gbe(gbe: float) -> None:
 # ── Prometheus helpers ────────────────────────────────────────────────────────
 
 _QUERIES = {
-    "throughput_mbps":  "daq_throughput_mbps",
+    "throughput_mbps":  "sum(daq_throughput_mbps)",
     "frames_written":   "sum(daq_frames_written_total)",
     "bytes_written":    "sum(daq_bytes_written_total)",
     "frames_dropped":   "sum(daq_frames_dropped_total)",
     "chunks_written":   "sum(daq_chunks_written_total)",
-    "buffer_fill":      "daq_buffer_fill_ratio",
+    "buffer_fill":      "sum(daq_buffer_fill_ratio)",
     "frames_received":  "sum(daq_frames_received_total)",
 }
 
