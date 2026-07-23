@@ -26,6 +26,9 @@ CHUNK_DIR       = os.environ.get("CHUNK_DIR",        "/data/chunks")
 PROMETHEUS_URL  = os.environ.get("PROMETHEUS_URL",   "http://prometheus:9090")
 INGESTION_SVC   = os.environ.get("INGESTION_SERVICE", "ingestion")
 
+# Flag file written by dashboard to gate ingestion startup
+_FLAG_FILE = os.path.join(CHUNK_DIR, ".ingestion_enabled")
+
 # Shared config file written by dashboard, read by ingestion at startup
 _BW_CONFIG_FILE = os.path.join(CHUNK_DIR, ".daq_bandwidth_gbe")
 
@@ -155,13 +158,14 @@ async def set_bandwidth(req: Request):
 
     _write_bw_gbe(gbe)
 
-    # restart ingestion so it picks up new bandwidth at startup
-    try:
-        container = _ingestion_container()
-        if container and container.status == "running":
-            container.restart(timeout=30)
-    except Exception as exc:
-        log.warning("Could not restart ingestion: %s", exc)
+    # only restart ingestion if the user has explicitly started it
+    if os.path.exists(_FLAG_FILE):
+        try:
+            container = _ingestion_container()
+            if container and container.status == "running":
+                container.restart(timeout=30)
+        except Exception as exc:
+            log.warning("Could not restart ingestion: %s", exc)
 
     return {"ok": True, "bandwidth_gbe": gbe, "target_mbps": gbe * 125}
 
@@ -182,6 +186,8 @@ async def logs(lines: int = 25):
 @app.post("/api/ingestion/start")
 async def start_ingestion():
     try:
+        os.makedirs(CHUNK_DIR, exist_ok=True)
+        open(_FLAG_FILE, "w").close()
         c = _ingestion_container()
         if not c:
             raise HTTPException(404, "Ingestion container not found")
@@ -201,9 +207,12 @@ async def stop_ingestion():
         c = _ingestion_container()
         if not c:
             raise HTTPException(404, "Ingestion container not found")
-        if c.status != "running":
-            return {"ok": True, "message": "Already stopped"}
-        c.stop(timeout=30)
+        if c.status == "running":
+            c.stop(timeout=30)
+        try:
+            os.remove(_FLAG_FILE)
+        except FileNotFoundError:
+            pass
         return {"ok": True, "message": "Ingestion stopped"}
     except HTTPException:
         raise
@@ -547,7 +556,7 @@ async function refreshLogs(){
 
 async function setBandwidth(gbe){
   const mbps=gbe*125;
-  if(!confirm('Set target bandwidth to '+gbe+' GbE ('+mbps+' MB/s)?\n\nIngestion will restart automatically to apply the new speed.')) return;
+  if(!confirm('Set target bandwidth to '+gbe+' GbE ('+mbps+' MB/s)?\\n\\nIngestion will restart automatically to apply the new speed.')) return;
   try{
     await api('POST','/api/bandwidth',{gbe});
     showToast('Bandwidth set to '+gbe+' GbE — ingestion restarting…',true);

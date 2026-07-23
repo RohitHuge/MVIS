@@ -65,6 +65,9 @@ MIN_FREE_DISK_GB  = int(os.environ.get("MIN_FREE_DISK_GB", "10"))  # stop before
 # Written by the dashboard when the user changes bandwidth target
 _BANDWIDTH_CONFIG  = os.path.join(CHUNK_DIR, ".daq_bandwidth_gbe")
 
+# Written by the dashboard's /api/ingestion/start; absent = do not process
+_START_FLAG = os.path.join(CHUNK_DIR, ".ingestion_enabled")
+
 
 def _read_bandwidth_gbe() -> float:
     """Read target bandwidth from the shared config file, fallback to env var."""
@@ -86,6 +89,11 @@ def _free_disk_gb(path: str) -> float:
 # ── pipeline ──────────────────────────────────────────────────────────────────
 
 def main() -> None:
+
+    # Guard: only run if the dashboard has explicitly started us
+    if not os.path.exists(_START_FLAG):
+        logger.info("Start flag absent (%s) — idle exit. Use the dashboard to start ingestion.", _START_FLAG)
+        sys.exit(0)
 
     # 1. Prometheus metrics HTTP endpoint
     logger.info("Starting Prometheus metrics server on :%d", METRICS_PORT)

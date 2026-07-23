@@ -102,7 +102,7 @@ services:
       dockerfile: frame_fetcher/Dockerfile
     env_file: .env
     expose:
-      - "9100"
+      - "8000"
     volumes:
       - chunk_data:/data/chunks
     depends_on:
