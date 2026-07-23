@@ -1,6 +1,12 @@
 x-common: &common
   restart: unless-stopped
   platform: linux/arm64
+  logging:
+    driver: json-file
+    options:
+      max-size: "20m"
+      max-file: "5"
+      tag: "{{.Name}}"
 
 services:
 
