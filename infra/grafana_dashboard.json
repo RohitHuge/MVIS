@@ -22,7 +22,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "daq_throughput_mbps",
+          "expr": "daq_throughput_mbps{job=\"daq_ingestion\"}",
           "legendFormat": "Write throughput (MB/s)",
           "refId": "A"
         }
@@ -80,7 +80,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "daq_buffer_fill_ratio",
+          "expr": "daq_buffer_fill_ratio{job=\"daq_ingestion\"}",
           "legendFormat": "Ring Buffer Fill",
           "refId": "A"
         }
@@ -105,7 +105,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "daq_frames_dropped_total",
+          "expr": "daq_frames_dropped_total{job=\"daq_ingestion\"}",
           "legendFormat": "Dropped Frames",
           "refId": "A"
         }
@@ -129,7 +129,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "daq_frames_written_total",
+          "expr": "daq_frames_written_total{job=\"daq_ingestion\"}",
           "legendFormat": "Total Frames Written",
           "refId": "A"
         }
@@ -153,7 +153,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "daq_chunks_written_total",
+          "expr": "daq_chunks_written_total{job=\"daq_ingestion\"}",
           "legendFormat": "Chunks Completed",
           "refId": "A"
         }
@@ -177,19 +177,19 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.50, rate(daq_chunk_write_latency_seconds_bucket[30s]))",
+          "expr": "histogram_quantile(0.50, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.95, rate(daq_chunk_write_latency_seconds_bucket[30s]))",
+          "expr": "histogram_quantile(0.95, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.99, rate(daq_chunk_write_latency_seconds_bucket[30s]))",
+          "expr": "histogram_quantile(0.99, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
           "legendFormat": "p99",
           "refId": "C"
         }
