@@ -177,19 +177,19 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.50, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
+          "expr": "histogram_quantile(0.50, rate(daq_chunk_write_latency_seconds_bucket{job=\"daq_ingestion\"}[30s]))",
           "legendFormat": "p50",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.95, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
+          "expr": "histogram_quantile(0.95, rate(daq_chunk_write_latency_seconds_bucket{job=\"daq_ingestion\"}[30s]))",
           "legendFormat": "p95",
           "refId": "B"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "histogram_quantile(0.99, rate(daq_chunk_write_latency_seconds_bucket{job="daq_ingestion"}[30s]))",
+          "expr": "histogram_quantile(0.99, rate(daq_chunk_write_latency_seconds_bucket{job=\"daq_ingestion\"}[30s]))",
           "legendFormat": "p99",
           "refId": "C"
         }
